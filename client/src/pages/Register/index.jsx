@@ -1,8 +1,11 @@
 import { Button, Form, Input, Radio } from 'antd';
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
 import HospitalOrganizationForm from './HospitalOrganizationForm';
-
+import { registerUser } from '../../apicalls/userApiCalls/userApi';
+import { message } from 'antd';
+import { setLoader } from '../../redux/loadersSlice';
+import { useDispatch } from 'react-redux';
 
 const rules = [
     {
@@ -12,11 +15,33 @@ const rules = [
 ]
 
 const Register = () => {
-
+    const navigate = useNavigate();
     const [userType, setUserType] = useState('donor');
+    const dispatch = useDispatch();
 
-    const onFinish = (values) => {
-        console.log(values);
+    useEffect(() => {
+        if (localStorage.getItem('blood_bank_token')) {
+            navigate('/')
+        }
+    })
+
+    const onFinish = async (values) => {
+        try {
+            dispatch(setLoader(true));
+            const response = await registerUser({ ...values, userType });
+            if (response.success) {
+                message.success(response.message);
+                navigate('/login');
+                dispatch(setLoader(false));
+            }
+            else {
+                throw Error(response.response.data.message);
+            }
+        } catch (error) {
+            console.log(error);
+            message.error(error.message);
+            dispatch(setLoader(false));
+        }
     }
 
     return (
@@ -62,7 +87,7 @@ const Register = () => {
                             {" "}
                             <Form.Item
                                 label='Name'
-                                name='name'
+                                name="name"
                                 rules={rules}
                             >
                                 <Input type='text' placeholder='Enter the user name' />
@@ -78,7 +103,7 @@ const Register = () => {
 
                             <Form.Item
                                 label='Phone'
-                                name='phone'
+                                name='phoneNumber'
                                 rules={rules}
                             >
                                 <Input type='number' />

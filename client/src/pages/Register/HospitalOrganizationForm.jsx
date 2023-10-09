@@ -12,7 +12,7 @@ const HospitalOrganizationForm = ({ userType }) => {
         <>
             <Form.Item
                 label={userType === 'hospital' ? "Hospital Name" : "Organization name"}
-                name='name'
+                name={userType === 'hospital' ? "hospitalName" : "organizationName"}
                 rules={rules}
             >
                 <Input type='text' placeholder='Enter the user name' />

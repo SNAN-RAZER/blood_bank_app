@@ -36,3 +36,8 @@ a:hover {
   text-decoration: underline !important;
   color: "#3F497F";
 }
+
+table {
+  border: 1px solid #9f9f9f !important;
+  border-radius: 2px !important;
+}

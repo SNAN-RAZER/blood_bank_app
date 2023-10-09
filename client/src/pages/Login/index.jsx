@@ -1,7 +1,10 @@
 import { Button, Form, Input, Radio } from 'antd';
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
-
+import React, { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
+import { loginUser } from '../../apicalls/userApiCalls/userApi';
+import { message } from 'antd';
+import { useDispatch } from 'react-redux';
+import { setLoader } from '../../redux/loadersSlice';
 
 const rules = [
     {
@@ -11,11 +14,38 @@ const rules = [
 ]
 
 const Login = () => {
-
+    const navigate = useNavigate();
     const [userType, setUserType] = useState('donor');
+    const dispatch = useDispatch();
 
-    const onFinish = (values) => {
-        console.log(values);
+    useEffect(() => {
+        if (localStorage.getItem('blood_bank_token')) {
+            navigate('/')
+        }
+    })
+
+
+
+    const onFinish = async (values) => {
+        try {
+            dispatch(setLoader(true));
+            const response = await loginUser({ ...values, userType });
+            if (response.success) {
+                localStorage.setItem('blood_bank_token', response.data);
+                message.success(response.message);
+                navigate('/');
+                dispatch(setLoader(false));
+            }
+            else {
+
+                throw Error(response.response.data.message);
+            }
+
+        } catch (error) {
+            dispatch(setLoader(false));
+            message.error(error.message);
+
+        }
     }
 
     return (
@@ -30,7 +60,7 @@ const Login = () => {
 
                 <h1 className="col-span-2 uppercase text-2xl">
                     <span className="text-primary">
-                        Register - {userType}
+                        Login - {userType}
                     </span>
 
                     <hr className='mt-2' />
