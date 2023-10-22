@@ -2,6 +2,8 @@ const userModel = require("../../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv");
+const mongoose = require("mongoose");
+const inventoryModel = require("../../models/inventoryModel");
 dotenv.config();
 
 // Register a user
@@ -101,8 +103,88 @@ const getUserData = async (req, res) => {
   }
 };
 
+// Get all unique donors
+const getAllDonorsData = async (req, res) => {
+  try {
+    const organization = new mongoose.Types.ObjectId(req.body.userId);
+    const uniqueDonorIds = await inventoryModel.distinct("donor", {
+      organization,
+    });
+
+    const donars = await userModel.find({
+      _id: { $in: uniqueDonorIds },
+    });
+
+    return res.send({
+      success: true,
+      message: "Donars fetched successfully",
+      data: donars,
+    });
+  } catch (error) {
+    return res.status(500).send({
+      success: true,
+      message: `Error ${error.message}`,
+    });
+  }
+};
+
+// Get all unique donors
+const getAllHospitalsData = async (req, res) => {
+  try {
+    const organization = new mongoose.Types.ObjectId(req.body.userId);
+    const uniqueHospitalsIds = await inventoryModel.distinct("hospital", {
+      organization,
+    });
+
+    const hospitals = await userModel.find({
+      _id: { $in: uniqueHospitalsIds },
+    });
+
+    return res.send({
+      success: true,
+      message: "Hospitals fetched successfully",
+      data: hospitals,
+    });
+  } catch (error) {
+    return res.status(500).send({
+      success: true,
+      message: `Error ${error.message}`,
+    });
+  }
+};
+
+// Get add unique organizations for a donor
+const getAllOrganizationsForADonor = async (req, res) => {
+  try {
+    const donor = new mongoose.Types.ObjectId(req.body.userId);
+    const uniqueOrganizationIds = await inventoryModel.distinct(
+      "organization",
+      {
+        donor,
+      }
+    );
+
+    const hospitals = await userModel.find({
+      _id: { $in: uniqueOrganizationIds },
+    });
+
+    return res.send({
+      success: true,
+      message: "Organizations fetched successfully",
+      data: hospitals,
+    });
+  } catch (error) {
+    return res.status(500).send({
+      success: true,
+      message: `Error ${error.message}`,
+    });
+  }
+};
 module.exports = {
   registerUser,
   loginUser,
   getUserData,
+  getAllDonorsData,
+  getAllHospitalsData,
+  getAllOrganizationsForADonor,
 };

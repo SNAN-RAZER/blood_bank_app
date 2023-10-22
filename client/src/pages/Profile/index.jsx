@@ -2,6 +2,8 @@ import { Tabs } from 'antd';
 import React from 'react'
 import { useSelector } from 'react-redux';
 import Inventory from './Inventory';
+import Donor from './Donor';
+import Hospitals from './Hospitals';
 
 const Profile = () => {
     const items = [
@@ -13,12 +15,12 @@ const Profile = () => {
         {
             key: '2',
             label: 'Donors',
-            children: <h1>Donors</h1>,
+            children: <Donor />,
         },
         {
             key: '3',
             label: 'Hospitals',
-            children: <h1>Hospitals</h1>,
+            children: <Hospitals />
         },
     ];
     const { user } = useSelector(state => state.user);

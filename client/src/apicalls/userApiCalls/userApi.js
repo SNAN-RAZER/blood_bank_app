@@ -38,3 +38,26 @@ export const getUserData = async () => {
     return error;
   }
 };
+
+export const getAllDonorsOfAnOrganization = async () => {
+  try {
+    const response = await axiosInstance.get(
+      "http://localhost:5001/v1/api/user/get-all-donors"
+    );
+
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
+export const getAllHospitalsOfAnOrganization = async () => {
+  try {
+    const response = await axiosInstance.get(
+      "http://localhost:5001/v1/api/user/get-all-hospitals"
+    );
+
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
